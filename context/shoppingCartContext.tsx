@@ -1,11 +1,15 @@
 "use client"
-import {createContext, ReactNode, useState,Dispatch,SetStateAction} from "react";
+import {createContext, ReactNode, useState, Dispatch, SetStateAction, useContext} from "react";
 
 interface ShoppingCartContextType {
     cartItems: TCartItems[];
     setCartItems: Dispatch<SetStateAction<TCartItems[]>>;
 }
-const ShoppingCartContext = createContext<ShoppingCartContextType | undefined>(undefined);
+const ShoppingCartContext = createContext({} as ShoppingCartContextType);
+
+export const useShoppingCartContext = () => {
+    return useContext(ShoppingCartContext);
+}
 
 interface ShoppingCartProviderProps {
     children: ReactNode;
