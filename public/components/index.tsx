@@ -1,6 +1,7 @@
 export {default as Container} from "./container/container";
 export {default as Navbar} from "./navbar/navbar";
 export {default as CardButton} from "./cardButton/cardButton";
+export {default as FormCreateProduct} from "./formCreateProduct/formCreateProduct";
 
 
 
