@@ -3,10 +3,12 @@
 import Link from "next/link";
 import {Container} from "@/public/components";
 import {usePathname} from "next/navigation";
+import {useShoppingCartContext} from "@/context/shoppingCartContext";
 
 const Navbar = () => {
 
     const pathName = usePathname();
+    const {cartItems} = useShoppingCartContext()
 
     const navLinks = [
         {
@@ -18,6 +20,11 @@ const Navbar = () => {
             id: 2,
             title: "فروشگاه",
             link: "/store"
+        },
+        {
+            id: 3,
+            title: "پنل کاربری",
+            link: "/dashboard"
         },
     ];
 
@@ -38,8 +45,9 @@ const Navbar = () => {
                             ))
                         }
                     </div>
-                    <div className={"max-h-12"}>
-                        <Link href={"/shopping-cart"} >
+                    <div className={"max-h-12 "}>
+                        <Link href={"/shopping-cart"} className="flex" >
+                            <span className="bg-red-400 rounded-full w-4 h-4 text-xs text-white text-center">{cartItems.length}</span>
                             <img
                                 src={"../../assets/icons/wired-outline-146-trolley-in-reveal.svg"}
                                 alt="shopping-cart"

@@ -43,7 +43,9 @@ const Product =async (props:IProductProps) => {
                 </div>
             </div>
 
-            <CardButton/>
+            <div className="flex flex-row-reverse">
+                <CardButton id={product?.id}/>
+            </div>
 
         </div>
     );
