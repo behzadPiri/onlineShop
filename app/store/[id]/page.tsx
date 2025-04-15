@@ -1,5 +1,6 @@
 import {IProduct} from "@/app/store/page";
 import {CardButton} from "@/public/components";
+import {numberFormatters} from "@/utils/numberFormatters";
 
 interface IProductProps {
     params: Promise<{id: string}>;
@@ -37,7 +38,7 @@ const Product =async (props:IProductProps) => {
                         {product.description}
                     </h4>
                     <p className="text-rose-500 text-lg font-bold">
-                        قیمت: {product.price} تومان
+                        قیمت: {numberFormatters(product.price)} تومان
                     </p>
 
                 </div>

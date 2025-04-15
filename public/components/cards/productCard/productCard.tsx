@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {IProduct} from "@/app/store/page";
+import {numberFormatters} from "@/utils/numberFormatters";
 
 const ProductCard = (product:IProduct) => {
     return (
@@ -20,7 +21,7 @@ const ProductCard = (product:IProduct) => {
             <div className="p-4 flex flex-col gap-2">
                 <h2 className="text-base sm:text-lg font-semibold line-clamp-1">{product.title}</h2>
                 <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
-                <span className="text-rose-600 font-bold text-base sm:text-lg">{product.price} تومان</span>
+                <span className="text-rose-600 font-bold text-base sm:text-lg">{numberFormatters(product.price)} تومان</span>
             </div>
         </Link>
     );
