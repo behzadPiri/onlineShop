@@ -1,17 +1,21 @@
 "use client"
 
 import ReactPaginate from "react-paginate";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
 const Pagination = ({pages}: { pages: number }) => {
 
     const router = useRouter();
+    const searchParams=useSearchParams()
 
 
     const handlePageClick = (e: { selected: number }) => {
         const selectedPage = e.selected + 1
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("_page", selectedPage.toString());
+        params.set("_limit", "5");
         window.scroll({top: 0, left: 0, behavior: "smooth"})
-        router.push(`/store?_page=${selectedPage}&_prev_page=5`)
+        router.push(`/store?${params.toString()}`);
     }
 
     return (
