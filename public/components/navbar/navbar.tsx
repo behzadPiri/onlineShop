@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import {Container} from "@/public/components";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
+import {redirect, usePathname, useRouter, useSearchParams} from "next/navigation";
 import {useShoppingCartContext} from "@/context/shoppingCartContext";
 import {useEffect, useState} from "react";
 import {debounceSearch} from "@/utils/debounceValidation";
+import Cookies from "js-cookie";
 
 const Navbar = () => {
 
@@ -14,6 +15,13 @@ const Navbar = () => {
     const [search, setSearch] = useState("")
     const router = useRouter()
     const searchParams = useSearchParams()
+    const token = Cookies.get("token");
+
+    const handleExitApp=()=>{
+        Cookies.remove("token");
+        redirect("/login")
+
+    }
 
 
     const navLinks = [
@@ -31,6 +39,11 @@ const Navbar = () => {
             id: 3,
             title: "پنل کاربری",
             link: "/dashboard"
+        },
+        {
+            id: 4,
+            title: "ورود",
+            link: "/login"
         },
     ];
 
@@ -83,7 +96,6 @@ const Navbar = () => {
                                 value={search}
                                 className="border border-gray-500 focus:border-1  rounded-lg focus:border-transparent focus:ring-blue-500 px-4 py-2"
                             />
-                            {/*<button onClick={handleSearch} className="bg-sky-500 p-2">send</button>*/}
                         </div>
                         <Link href={"/shopping-cart"} className="flex">
 
@@ -99,6 +111,15 @@ const Navbar = () => {
                                 height={32}
                             />
                         </Link>
+                        {
+                            token &&
+                            <button
+                                onClick={() => Cookies.remove("token")}
+                                className="cursor-pointer mx-1 text-red-800">
+                                خروج
+                            </button>
+                        }
+
                     </div>
                 </div>
 
