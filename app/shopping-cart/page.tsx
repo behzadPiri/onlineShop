@@ -23,11 +23,12 @@ const ShoppingCart = () => {
     const getProducts = async () => {
 
         try {
-            const query = cartItems.map(item => `id=${item.id}`).join("&");
+            // const query = cartItems.map(item => `id=${item.id}`).join("&");
+            const query = cartItems.map(item => `id=${encodeURIComponent(String(item.id))}`).join("&");
+            console.log("--->",`http://localhost:9000/products?${query}`)
             const result = await axios.get(`http://localhost:9000/products?${query}`);
             if (result) {
                 const {data} = result;
-                await handlerDiscountCode(data)
                 const mergedProducts = await data.map((product: IProduct) => {
                     const match = cartItems.find(item => item.id === parseInt(product.id));
                     return {
@@ -42,36 +43,87 @@ const ShoppingCart = () => {
         }
     }
 
+    // const handlerDiscountCode = async (productsList: IProduct[]) => {
+    //     let totalPriceProducts = getTotalPrice(productsList);
+    //
+    //     try {
+    //         if (Boolean(discountCode)) {
+    //             const result = await axios.get(`http://localhost:9000/discount?code=${discountCode.trim()}`);
+    //             if (result.status === 200) {
+    //                 const data = result.data as IDiscountCode[];
+    //                 let discountPriceProducts = totalPriceProducts * (data[0].percentage / 100)
+    //
+    //                 let totalPrice = totalPriceProducts - discountPriceProducts;
+    //                 setDiscountPrice(discountPriceProducts);
+    //                 setTotalPriceEnd(totalPrice)
+    //                 if (data.length > 0) {
+    //                     let discountPriceProducts = totalPriceProducts * (data[0].percentage / 100);
+    //                 } else {
+    //                     setDiscountPrice(0);
+    //                     setTotalPriceEnd(totalPriceProducts);
+    //                 }
+    //                 setDiscountCode("")
+    //             }
+    //
+    //         } else {
+    //             setDiscountPrice(0);
+    //             setTotalPriceEnd(totalPriceProducts)
+    //         }
+    //
+    //     } catch (e) {
+    //         console.log("error", e);
+    //     }
+    // }
+
     const handlerDiscountCode = async (productsList: IProduct[]) => {
-        let totalPriceProducts = getTotalPrice(productsList);
-        console.log("Total price products", totalPriceProducts);
+        const totalPriceProducts = getTotalPrice(productsList);
+
         try {
-            if (Boolean(discountCode)) {
-                const result = await axios.get(`http://localhost:9000/discount?code=${discountCode}`);
+            if (discountCode.trim()) {
+                const result = await axios.get(`http://localhost:9000/discount?code=${discountCode.trim()}`);
+
                 if (result.status === 200) {
                     const data = result.data as IDiscountCode[];
-                    let discountPriceProducts = totalPriceProducts * (data[0].percentage / 100)
-                    let totalPrice = totalPriceProducts - discountPriceProducts;
-                    setDiscountPrice(discountPriceProducts);
-                    setTotalPriceEnd(totalPrice)
-                    setDiscountCode("")
+
+                    if (data.length > 0) {
+                        const discount = totalPriceProducts * (data[0].percentage / 100);
+                        const finalPrice = totalPriceProducts - discount;
+
+                        setDiscountPrice(discount);
+                        setTotalPriceEnd(finalPrice);
+                        setDiscountCode(""); // پاک کردن کد بعد از استفاده
+                    } else {
+                        // کد تخفیف وجود ندارد یا معتبر نیست
+                        setDiscountPrice(0);
+                        setTotalPriceEnd(totalPriceProducts);
+                    }
                 }
-
             } else {
+                // اگر هیچ کدی وارد نشده باشد
                 setDiscountPrice(0);
-                setTotalPriceEnd(totalPriceProducts)
+                setTotalPriceEnd(totalPriceProducts);
             }
-
         } catch (e) {
-            console.log("error", e);
+            console.log("خطا در بررسی کد تخفیف:", e);
+            setDiscountPrice(0);
+            setTotalPriceEnd(totalPriceProducts);
         }
     }
+
 
     useEffect(() => {
         cartItems.length > 0 && getProducts();
         return () => {
         };
     }, [cartItems,])
+
+    useEffect(() => {
+        if (!discountCode) {
+            const totalPriceProducts = getTotalPrice(products);
+            setDiscountPrice(0);
+            setTotalPriceEnd(totalPriceProducts);
+        }
+    }, [products]);
 
     return (
         <div className="mx-auto max-w-screen-lg sm:mb-6 px-4 py-4">
